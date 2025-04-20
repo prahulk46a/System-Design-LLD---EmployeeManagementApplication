@@ -12,7 +12,7 @@ import com.example.demo.services.EmployeeService;
 
 import jakarta.validation.Valid;
 
-
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api")
 
@@ -24,6 +24,7 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/employees")
+	@CrossOrigin(origins = "http://localhost:5173")
 	public ResponseEntity<List<EmployeeDTO>> getAllEmployee(){
 		return ResponseEntity.ok(employeeService.getAllEmployees());
 	}
@@ -31,21 +32,25 @@ public class EmployeeController {
 	
 	
 	@PostMapping("/employees/create")
+	@CrossOrigin(origins = "http://localhost:5173")
 	public ResponseEntity<EmployeeDTO>create(@Valid @RequestBody EmployeeDTO dto){
 		return ResponseEntity.ok(employeeService.createEmployee(dto));
 	}
 	
 	@GetMapping("/employees/{id}")
+	@CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<EmployeeDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(employeeService.getEmployeeById(id));
     }
 
     @PutMapping("/employees/{id}")
+    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<EmployeeDTO> update(@PathVariable Long id, @Valid @RequestBody EmployeeDTO dto) {
         return ResponseEntity.ok(employeeService.updateEmployee(id, dto));
     }
 
     @DeleteMapping("/employees/{id}")
+    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         employeeService.deleteEmployee(id);
         return ResponseEntity.noContent().build();
@@ -54,6 +59,7 @@ public class EmployeeController {
     
     //Paginated data fetch
     @GetMapping("/employees/list")
+    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<Page<EmployeeDTO>> getAllPaginated(
             @RequestParam(defaultValue  = "0") int page,
             @RequestParam(defaultValue = "10") int size,
