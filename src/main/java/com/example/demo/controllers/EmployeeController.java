@@ -3,12 +3,11 @@ package com.example.demo.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.dtos.EmployeeDTO;
-import com.example.demo.entities.Employee;
 import com.example.demo.services.EmployeeService;
 
 import jakarta.validation.Valid;
@@ -20,7 +19,6 @@ import jakarta.validation.Valid;
 public class EmployeeController {
 	
 	private final EmployeeService employeeService;
-	@Autowired
 	public EmployeeController(EmployeeService employeeService) {
 		this.employeeService = employeeService;
 	}
@@ -51,6 +49,17 @@ public class EmployeeController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         employeeService.deleteEmployee(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    
+    //Paginated data fetch
+    @GetMapping("/employees/list")
+    public ResponseEntity<Page<EmployeeDTO>> getAllPaginated(
+            @RequestParam(defaultValue  = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "employeeId") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+        return ResponseEntity.ok(employeeService.getAllEmployeesPaginated(page, size, sortBy, direction));
     }
 	
 }

@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dtos.EmployeeDTO;
@@ -49,8 +53,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    public EmployeeDTO updateEmployee(Long id, EmployeeDTO employeeDTO) {
 	        Employee existingEmployee = employeeRepository.findById(id)
 	                .orElseThrow(() -> new RuntimeException("Employee not found with ID: " + id));
-
-	        System.out.println("UPDATE PAYLOAD: " + employeeDTO);
 	        existingEmployee.setFirstName(employeeDTO.getFirstName());
 	        existingEmployee.setLastName(employeeDTO.getLastName());
 	        existingEmployee.setEmail(employeeDTO.getEmail());
@@ -63,6 +65,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    @Override
 	    public void deleteEmployee(Long id) {
 	        employeeRepository.deleteById(id);
+	    }
+	    
+	    
+	    @Override
+	    public Page<EmployeeDTO> getAllEmployeesPaginated(int page, int size, String sortBy, String direction) {
+	        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+	        Pageable pageable = PageRequest.of(page, size, sort);
+	        return employeeRepository.findAll(pageable)
+	                .map(this::entityToDto);
 	    }
 
 	    private Employee dtoToEntity(EmployeeDTO dto) {
