@@ -10,10 +10,11 @@ export default function EmployeeManagementApp() {
     department: "",
   });
   const [editId, setEditId] = useState(null);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const API = "http://localhost:8080/api/employees";
 
-  // Fetch all employees
   const fetchEmployees = async () => {
     try {
       const response = await axios.get(API);
@@ -23,24 +24,42 @@ export default function EmployeeManagementApp() {
     }
   };
 
-  // Create or Update employee
   const handleSubmit = async () => {
+    const { firstName, lastName, email, department } = formData;
+
+    // Basic validation
+    if (!firstName || !lastName || !email || !department) {
+      alert("Enter All details")
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert("Enter correct Email address")
+      setSuccess("");
+      return;
+    }
+
     try {
       if (editId) {
-        // Update
         await axios.put(`${API}/${editId}`, formData);
+        setSuccess("Employee updated successfully.");
       } else {
-        // Create
         await axios.post(API, formData);
+        setSuccess("Employee added successfully.");
       }
+      setError("");
       resetForm();
       fetchEmployees();
     } catch (err) {
       console.error("Error submitting employee", err);
+      setError("Something went wrong while submitting.");
+      setSuccess("");
     }
   };
 
-  const resetForm = () => {
+  const resetForm = () => {	
     setFormData({
       firstName: "",
       lastName: "",
@@ -58,6 +77,8 @@ export default function EmployeeManagementApp() {
       department: emp.department,
     });
     setEditId(emp.id);
+    setError("");
+    setSuccess("");
   };
 
   const handleDelete = async (id) => {
@@ -84,6 +105,10 @@ export default function EmployeeManagementApp() {
       <h1 className="text-2xl font-bold text-center mb-6">
         Employee Management
       </h1>
+
+      {/* Alerts */}
+      {error && <p className="text-red-600 font-semibold mb-2">{error}</p>}
+      {success && <p className="text-green-600 font-semibold mb-2">{success}</p>}
 
       {/* Form */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
